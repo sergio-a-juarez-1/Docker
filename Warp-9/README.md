@@ -6,4 +6,4 @@
 * **Availability:** You can find these programs directly on the [Warp 9 Training Platform](https://warp-9.com) or via platforms like [Udemy](https://udemy.com). 
 
 ### Other Warp 9 Courses
-* Kubernetes
+* [Kubernetes](https://github.com/sergio-a-juarez-1/Kubernetes/tree/main/Warp-9)
