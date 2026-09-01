@@ -1,60 +1,52 @@
-# Jenkins in Docker
+# Jenkins Automation Masterclass & Docker Environments
 
-This repository contains documentation, configurations, and a custom Dockerfile to build and run **Jenkins** inside a Docker environment with full support for Docker-in-Docker (DinD) and pre-installed core plugins like Blue Ocean.
+Welcome to the official repository for the **Jenkins & Docker Infrastructure** training courses! This combined repository brings together production-grade container orchestration configurations and complete, multi-branch, parameter-driven automation pipelines. 
 
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Hardware Recommendations](#hardware-recommendations)
-- [Getting Started (macOS \& Linux)](#getting-started-macos--linux)
-  - [1. Create a Docker Network](#1-create-a-docker-network)
-  - [2. Run the Docker-in-Docker (DinD) Container](#2-run-the-docker-in-docker-dind-container)
-  - [3. Build the Custom Jenkins Image](#3-build-the-custom-jenkins-image)
-  - [4. Run the Jenkins Container](#4-run-the-jenkins-container)
-- [Configuration and Customs](#configuration-and-customs)
-  - [Custom CA Certificates](#custom-ca-certificates)
-- [Post-Installation Setup](#post-installation-setup)
-- [Troubleshooting](#troubleshooting)
+This layout maps exactly to your workspace directories, combining your architecture blueprints with the hands-on **Jenkins in Docker** and **Git Warp-9** curriculums.
 
 ---
 
-## Features
-
-- **Docker-in-Docker Support**: Allows Jenkins nodes to run Docker commands and spin up containers.
-- **Pre-installed Plugins**: Comes bundled with `blueocean`, `docker-workflow`, and `json-path-api`.
-- **Docker CLI Integrated**: The custom Jenkins image installs the official `docker-ce-cli`.
-
----
-
-## Prerequisites
-
-- **Docker Engine**: Installed and running.
-- **Linux Users**: Ensure Docker is configured to run as a non-root user.
-
-### Hardware Recommendations
-
-| Metric | Minimum Requirements | Small Team Recommended |
-| :--- | :--- | :--- |
-| **RAM** | 256 MB | 4 GB+ |
-| **Storage** | 1 GB (10 GB for containers) | 50 GB+ |
+## 📊 Combined Course Metrics
+* **Total Curriculum Scope:** 16 Sections • 47 Lectures • 1h 55m Runtime (Git Warp-9) + Integrated Jenkins Labs
+* **Core Core Competency:** Deploy self-healing, containerized CI/CD controllers, manage sidecar Docker-in-Docker (DinD) architectures, and engineer declarative, parameterized Jenkinsfiles with Groovy extensions.
+* **Target Environment:** Docker Engine, Linux/macOS Shells, Jenkins LTS Core, and Git plumbing frameworks.
 
 ---
 
-## Getting Started (macOS & Linux)
+## 📂 Consolidated Repository Structure
 
-Follow these steps to establish the Docker network, sidecar DinD container, and Jenkins server:
+```text
+├── Jenkins_In_Docker/        # Root CI/CD system infrastructure & base architecture blueprints
+│   ├── Dockerfile            # Custom Jenkins LTS layer with Docker-CE-CLI & bundled plugins
+│   ├── README.md             # Local setup instructions for the Jenkins host controller
+│   └── Jenkins-Course/       # Multi-stage validation labs and lecture pipeline scripts
+│       ├── challenge2/       # Multi-stage software validation and test automation scripts
+│       ├── challenge3/       # Advanced error containment and script pipeline executions
+│       ├── func/             # Custom Groovy functions and reusable declarative pipeline logic
+│       ├── variables/        # Environment string registers, credential helpers, and scope tracking
+│       └── params/           # Core runtime configuration entrypoints
+│           ├── boolean/      # Conditional execution blocks (e.g., conditional deployments)
+│           ├── choice/       # Dynamic dropdown selections for target environments
+│           ├── input/        # Intercept stages that pause pipelines for manual approval
+│           ├── launch/       # Downstream instantiation scripts and trigger operations
+│           └── remoteJob/    # Cross-server remote API pipeline invocation setups
+└── Warp-9/                   # High-velocity advanced workflow sandboxes and repository content
+```
+
+---
+
+## 🛠️ Infrastructure Getting Started
+
+Follow these steps to establish the dedicated Docker bridge network, fire up the privileged sidecar Docker-in-Docker (DinD) container daemon, and launch your automated Jenkins controller.
 
 ### 1. Create a Docker Network
-Open your terminal and isolate your components on a dedicated bridge network:
+Isolate your continuous integration components on a dedicated bridge network:
 ```bash
 docker network create jenkins
 ```
 
 ### 2. Run the Docker-in-Docker (DinD) Container
-To allow Jenkins to run Docker commands, spin up a secure, privileged Docker daemon container:
+To allow your Jenkins pipelines to spin up containerized workloads, execute a privileged sidecar Docker daemon instance:
 ```bash
 docker run --name jenkins-docker --rm --detach \
   --privileged --network jenkins --network-alias docker \
@@ -64,38 +56,15 @@ docker run --name jenkins-docker --rm --detach \
   --publish 2376:2376 \
   docker:dind --storage-driver overlay2
 ```
-**Key Flags Explained:**
-- `--privileged`: Required for DinD to function properly.
-- `--network-alias docker`: Exposes this container's daemon to the Jenkins container via the `docker` hostname.
-- `--env DOCKER_TLS_CERTDIR=/certs`: Enforces secure TLS verification across containers.
 
-### 3. Build the Custom Jenkins Image
-Create a file named `Dockerfile` and copy the code below. This sets up the base LTS image, installs the Docker CLI, and adds plugins.
-
-```dockerfile
-FROM jenkins/jenkins:2.568.2-jdk21
-USER root
-RUN apt-get update && apt-get install -y lsb-release ca-certificates curl && \
-    install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://docker.com -o /etc/apt/keyrings/docker.asc && \
-    chmod a+r /etc/apt/keyrings/docker.asc && \
-    echo "deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
-    https://docker.com \((. /etc/os-release && echo \"\)VERSION_CODENAME\") stable" \
-    | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y docker-ce-cli && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-USER jenkins
-RUN jenkins-plugin-cli --plugins "blueocean docker-workflow json-path-api"
-```
-
-Build your customized image with a tag:
+### 3. Build and Run the Parameterized Jenkins Controller
+Navigate to your infrastructure workspace, build the custom image embedded with `docker-ce-cli`, `blueocean`, and `docker-workflow`, and launch it:
 ```bash
+# Move to workspace and build image
+cd Jenkins_In_Docker
 docker build -t myjenkins-blueocean:2.568.2-1 .
-```
 
-### 4. Run the Jenkins Container
-Launch the built image. Connect it to your `jenkins` network and link the shared certificates and data volumes:
-```bash
+# Launch the orchestrator container
 docker run --name jenkins-blueocean --rm --detach \
   --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
   --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
@@ -107,34 +76,39 @@ docker run --name jenkins-blueocean --rm --detach \
 
 ---
 
-## Configuration and Customs
+## 📘 Detailed Syllabus Breakdown
 
-### Custom CA Certificates
-If your environment interacts with internal tools using self-signed certificates, utilize one of these methods to mount custom CA certificates into your environment:
+### 🐳 Infrastructure Architecture & Host Virtualization
+* **Docker-in-Docker Plumbing:** Linking independent container environments together safely via network aliases (`--network-alias docker`) and mutually verified TLS certificate volumes.
+* **Controller Customization:** Building highly tailored core dependencies using internal security certificate injections (`update-ca-certificates`) and bundling required toolsets right out of the box using the `jenkins-plugin-cli`.
+* **Hardware Benchmarking:** Allocating system resource envelopes to handle simultaneous code checkouts and pipeline builds without exhausting host capacity:
 
-#### Option 1: Docker Compose with Init Container (Recommended)
-An initialization container can process and update your certificates into the shared Java Truststore volume before Jenkins boots up.
+| Metric | Minimum Requirements | Small Team Recommended |
+| :--- | :--- | :--- |
+| **RAM** | 256 MB | 4 GB+ |
+| **Storage** | 1 GB (10 GB for containers) | 50 GB+ |
 
-#### Option 2: Custom Docker Image
-Alternatively, copy your root certificates directly into your base build layer and use traditional Debian commands (`update-ca-certificates`) to trust them across the image layer.
+### 📜 Declarative Pipelines & Build Orchestration
+* **Syntax Engineering:** Writing pipeline scripts built on strict lifecycle hooks: setting up execution `agents`, processing operational `stages`, handling repository clones, and implementing automated `post`/`clean up` stages.
+* **Workspace Directives:** Isolating target build directories via the `dir` wrapper step to execute multi-tier configurations (such as building projects with explicit Maven layers) without overlapping environments.
+* **Source Control Integration:** Tracking changes over time using Polling SCM strategies and creating zero-touch **MultiBranch Pipelines** that automatically discover and build newly pushed feature tracks.
+
+### 🎛️ Runtime Parameters, Variables & Logical Security
+* **Interactive Form Intercepts:** Hardening execution pipelines through conditional gates:
+  * `boolean`: Dynamically toggling unit tests or production branch expansions.
+  * `string` & `choice`: Ingesting custom target parameters or runtime environment flags via dropdown lists.
+  * `input`: Halting active jobs mid-execution until an operator provides explicit manual validation.
+* **Variable Scope and Groovy Extensions:** Expanding pipeline logic by managing explicit credential injections, using `if` conditional branches to handle error scenarios, and passing data variables across running sub-jobs.
+* **Git Warp-9 Frameworks:** Integrating advanced workflow control steps into local and remote developer setups to ensure swift history rebasing and clean commit workflows.
 
 ---
 
-## Post-Installation Setup
+## 🧼 System Housekeeping & Cleanup
+When you need to tear down your local sandbox environment and clean up all allocated storage spaces, run the following cleanup script:
+```bash
+# 1. Stop running containers
+docker stop jenkins-blueocean jenkins-docker
 
-1. **Access Jenkins**: Open your web browser and navigate to `http://localhost:8080`.
-2. **Unlock Jenkins**: Retrieve the initial administrator password from the container's logs:
-   ```bash
-   docker logs jenkins-blueocean
-   ```
-3. **Setup Wizard**: Complete the guided setup to establish your initial admin user profile.
-
----
-
-## Troubleshooting
-
-- **Check Container Logs**: If your builds or instances crash, monitor live console outputs:
-  ```bash
-  docker logs -f jenkins-blueocean
-  ```
-- **Verify DinD TLS Mismatch**: Ensure your `DOCKER_HOST` environment value points precisely to the sidecar container `tcp://docker:2376` over the unified bridge network.
+# 2. Purge persistent volumes to reclaim host space
+docker volume rm jenkins-data jenkins-docker-certs
+```
