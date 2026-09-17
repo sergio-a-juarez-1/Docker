@@ -32,63 +32,59 @@ A lightweight, high-performance **arcade crossing game** written in pure C and f
 To run this desktop game on any standard Linux environment, you do not need to install local graphical libraries. Ensure you have **Docker** installed and running on your host system.
 
 ### 1. Clone and Navigate to the Game Directory
-Clone the repository from GitHub and change directories into the specific `containerized_game` workspace:
+Clone the repository into your preferred folder (e.g., `~/Downloads/`) and change directories into the specific `containerized_game` workspace:
 ```bash
-git clone https://github.com/sergio-a-juarez-1/Docker.git
+git clone https://github.com
 cd Docker/containerized_game/
 ```
 
-### 2. Build the Image
+### 2. Initialize the Scoreboard File
+Before building or running the container, you **must create a base data file** on your machine. If you do not create this empty file beforehand, Docker will automatically generate a broken directory placeholder that crashes the application:
+```bash
+echo "1" > highscore.txt
+```
+
+### 3. Build the Image
 Run the multi-stage build command inside the folder to compile the C source code and assemble the runtime layer:
 ```bash
 docker build -t native-c-game .
 ```
 
-### 3. Run the Game (With Silent Terminal Sockets & Sound)
-Execute this command sequence to temporarily authorize connection endpoints, link system resources, mount your score persistence file, and launch the application cleanly:
-```bash
-# Authorize local container connections to your screen monitor quietly
-xhost +local:docker >/dev/null 2>&1
-
-# Launch the game container with graphic, hardware audio, and storage maps
-docker run -it --rm \
-  --env DISPLAY=$DISPLAY \
-  --volume /tmp/.X11-unix:/tmp/.X11-unix:ro \
-  --device /dev/snd \
-  --env PULSE_SERVER=unix:/run/user/1000/pulse/native \
-  --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native \
-  -v $(pwd)/highscore.txt:/app/highscore.txt \
-  native-c-game:latest
-
-# Remove local container access permissions upon exit safely
-xhost -local:docker >/dev/null 2>&1
-```
-*(Note: If your local Linux user ID is something other than the default `1000`, replace the two `1000` integers in the path links above with your custom UID, which can be verified by running `id -u` in your terminal).*
-
-### 💡 Pro-Tip: Fast Alias Execution
-To play the game without copying the long command each time, add this short-key script alias directly into your local terminal prompt session:
-```bash
-alias turtle="xhost +local:docker >/dev/null 2>&1; docker run -it --rm --env DISPLAY=\$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:ro --device /dev/snd --env PULSE_SERVER=unix:/run/user/1000/pulse/native --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native -v /home/u/Docker/containerized_game/highscore.txt:/app/highscore.txt native-c-game:latest; xhost -local:docker >/dev/null 2>&1"
-```
-
-### 3. Make the Shortcut Permanent
-
-Aliases disappear as soon as you close your terminal window. To make `turtle` stick around forever so you can use it anytime you boot up your computer, save it directly to your shell profile by executing the following command:
+### 4. Create a Permanent Execution Shortcut
+Aliases disappear as soon as you close your terminal window. To make a shortcut stick around forever so you can run the game with a single command from **any folder path on your computer**, append the path to your shell profile configuration:
 
 ```bash
-echo 'alias turtle="xhost +local:docker >/dev/null 2>&1; docker run -it --rm --env DISPLAY=\$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:ro --device /dev/snd --env PULSE_SERVER=unix:/run/user/1000/pulse/native --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native -v /home/u/Docker/containerized_game/highscore.txt:/app/highscore.txt native-c-game:latest; xhost -local:docker >/dev/null 2>&1"' >> ~/.bashrc
+echo 'alias turtle="xhost +local:docker >/dev/null 2>&1; docker run -it --rm --env DISPLAY=\$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:ro --device /dev/snd --env PULSE_SERVER=unix:/run/user/1000/pulse/native --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native -v $(pwd)/highscore.txt:/app/highscore.txt native-c-game:latest; xhost -local:docker >/dev/null 2>&1"' >> ~/.bashrc
 ```
 
-After pasting the command above, apply the changes to your current terminal session:
+Apply the profile updates to your active shell interface:
 ```bash
 source ~/.bashrc
 ```
 
-Now you can open any fresh terminal window from any location on your machine and simply type:
+You can now open any fresh terminal window from any folder location on your machine and simply play the game by executing:
 ```bash
 turtle
 ```
 
+---
+
+## 🛠 Infrastructure Troubleshooting
+
+### Error: `Are you trying to mount a directory onto a file (or vice-versa)?`
+If you hit an OCI runtime mount error stating `not a directory` when typing `turtle`, it means the wrapper alias was executed before a physical text file existed on your computer at that location. Docker incorrectly generated an empty directory folder named `highscore.txt` instead.
+
+**To completely wipe the broken environment and reset your scoreboard, run this cleanup sequence:**
+```bash
+# 1. Delete the accidental ghost directory folders created by the engine daemon
+rm -rf highscore.txt
+
+# 2. Re-initialize a physical, raw flat text integer file natively
+echo "1" > highscore.txt
+
+# 3. Relaunch the environment securely
+turtle
+```
 
 ---
 
@@ -109,4 +105,4 @@ typedef struct {
 ```
 *   **Rendering Loop:** Handled via tight `while(true)` poll check validation via `XPending()` to keep engine thread overhead minimal.
 *   **Vector Alphanumeric Typography Engine:** Features a custom typography engine that mathematically draws characters out of raw matrix line arrays (`GL_LINES`), solving the issue of containerized font corruption or system asset mismatches entirely.
-*   **Process Sandbox:** Background music threads are tracked via dynamic
+*   **Process Sandbox:** Background music threads are tracked via dynamic state tracking process hooks, allowing for a clean audio layout termination check upon close events.
