@@ -68,12 +68,27 @@ xhost -local:docker >/dev/null 2>&1
 ### 💡 Pro-Tip: Fast Alias Execution
 To play the game without copying the long command each time, add this short-key script alias directly into your local terminal prompt session:
 ```bash
-alias frogger="xhost +local:docker >/dev/null 2>&1; docker run -it --rm --env DISPLAY=\$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:ro --device /dev/snd --env PULSE_SERVER=unix:/run/user/1000/pulse/native --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native -v \$(pwd)/highscore.txt:/app/highscore.txt native-c-game:latest; xhost -local:docker >/dev/null 2>&1"
+alias turtle="xhost +local:docker >/dev/null 2>&1; docker run -it --rm --env DISPLAY=\$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:ro --device /dev/snd --env PULSE_SERVER=unix:/run/user/1000/pulse/native --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native -v /home/u/Docker/containerized_game/highscore.txt:/app/highscore.txt native-c-game:latest; xhost -local:docker >/dev/null 2>&1"
 ```
-Now you can launch the fully mixed arcade setup cleanly anytime simply by executing:
+
+### 3. Make the Shortcut Permanent
+
+Aliases disappear as soon as you close your terminal window. To make `turtle` stick around forever so you can use it anytime you boot up your computer, save it directly to your shell profile by executing the following command:
+
 ```bash
-frogger
+echo 'alias turtle="xhost +local:docker >/dev/null 2>&1; docker run -it --rm --env DISPLAY=\$DISPLAY --volume /tmp/.X11-unix:/tmp/.X11-unix:ro --device /dev/snd --env PULSE_SERVER=unix:/run/user/1000/pulse/native --volume /run/user/1000/pulse/native:/run/user/1000/pulse/native -v /home/u/Docker/containerized_game/highscore.txt:/app/highscore.txt native-c-game:latest; xhost -local:docker >/dev/null 2>&1"' >> ~/.bashrc
 ```
+
+After pasting the command above, apply the changes to your current terminal session:
+```bash
+source ~/.bashrc
+```
+
+Now you can open any fresh terminal window from any location on your machine and simply type:
+```bash
+turtle
+```
+
 
 ---
 
