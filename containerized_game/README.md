@@ -31,13 +31,20 @@ A lightweight, high-performance **arcade crossing game** written in pure C and f
 
 To run this desktop game on any standard Linux environment, you do not need to install local graphical libraries. Ensure you have **Docker** installed and running on your host system.
 
-### 1. Build the Image
-Run the multi-stage build command inside your project root folder to compile the source code and assemble the clean game environment:
+### 1. Clone and Navigate to the Game Directory
+Clone the repository from GitHub and change directories into the specific `containerized_game` workspace:
+```bash
+git clone https://github.com/sergio-a-juarez-1/Docker.git
+cd Docker/containerized_game/
+```
+
+### 2. Build the Image
+Run the multi-stage build command inside the folder to compile the C source code and assemble the runtime layer:
 ```bash
 docker build -t native-c-game .
 ```
 
-### 2. Run the Game (With Silent Terminal Graphics & Sound)
+### 3. Run the Game (With Silent Terminal Sockets & Sound)
 Execute this command sequence to temporarily authorize connection endpoints, link system resources, mount your score persistence file, and launch the application cleanly:
 ```bash
 # Authorize local container connections to your screen monitor quietly
