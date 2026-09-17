@@ -34,9 +34,19 @@ To run this desktop game on your Linux environment, you do not need to install l
 ### 1. Clone and Prepare the Game Directory
 Clone the repository into your preferred folder and safely copy the workspace into your unprivileged user home directory:
 ```bash
+# 1. Clone the parent repository configuration
 git clone https://github.com/sergio-a-juarez-1/Docker.git
+
+# 2. Structure your clean home directory workspace
 mkdir -p ~/containerized_game
+
+# 3. Safely copy only the containerized game assets out of the repository
 cp -r Docker/containerized_game/* ~/containerized_game/
+
+# 4. Safely wipe the redundant repository directory root to clear system clutter
+rm -rf Docker
+
+# 5. Move into your active standalone environment space
 cd ~/containerized_game
 ```
 ### 2. Initialize the Scoreboard File (Optional)
