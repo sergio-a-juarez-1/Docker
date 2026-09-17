@@ -34,7 +34,7 @@ To run this desktop game on any standard Linux environment, you do not need to i
 ### 1. Clone and Navigate to the Game Directory
 Clone the repository into your preferred folder (e.g., `~/Downloads/`) and change directories into the specific containerized workspace:
 ```bash
-git clone https://github.com
+git clone https://github.com/sergio-a-juarez-1/Docker.git
 cd Docker/containerized_game/
 ```
 
