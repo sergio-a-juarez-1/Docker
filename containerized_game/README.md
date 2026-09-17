@@ -32,19 +32,22 @@ A lightweight, high-performance **arcade crossing game** written in pure C and f
 To run this desktop game on any standard Linux environment, you do not need to install local graphical libraries. Ensure you have **Docker** installed and running on your host system.
 
 ### 1. Clone and Navigate to the Game Directory
-Clone the repository into your preferred folder (e.g., `~/Downloads/`) and change directories into the specific `containerized_game` workspace:
+Clone the repository into your preferred folder (e.g., `~/Downloads/`) and change directories into the specific containerized workspace:
 ```bash
 git clone https://github.com
 cd Docker/containerized_game/
 ```
 
-### 2. Initialize the Scoreboard File
-Before building or running the container, you **must create a base data file** on your machine. If you do not create this empty file beforehand, Docker will automatically generate a broken directory placeholder that crashes the application:
+### 2. Initialize the Scoreboard File   [OPTIONAL]
+This step is not strictly necessary if you clone the repository exactly as instructed. The `highscore.txt` file is already tracked and included in this GitHub repo, so it will automatically land in your folder as a real file the second you run `git clone`. 
+
+However, keeping this step as an optional reference is excellent defensive engineering practice. If a user deletes the file by accident, resets their codebase, or runs the launch command in a blank directory, it will trigger a folder-mounting daemon crash. If you ever need to manually regenerate it, run:
 ```bash
 echo "1" > highscore.txt
 ```
 
-### 3. Build the Image
+<h3>3. Build the Image</h3>
+
 Run the multi-stage build command inside the folder to compile the C source code and assemble the runtime layer:
 ```bash
 docker build -t native-c-game .
